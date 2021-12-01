@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  tv_control_database:
+    image: postgres:14.1
+    container_name: tv_control_database
+    restart: unless-stopped
+    volumes:
+      - ./database:/var/lib/postgresql
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${DB_DATABASE}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    networks:
+      - tv_control_network
+
+networks:
+  tv_control_network:
+    name: tv_control_network
+    driver: bridge
