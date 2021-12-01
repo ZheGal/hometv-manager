@@ -16,6 +16,20 @@ services:
     networks:
       - tv_control_network
 
+  tv_control_app:
+    build:
+      context: ./app/php-fpm
+    image: tv_control_app:latest
+    container_name: tv_control_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www:rw
+    depends_on:
+      - tv_control_database
+    networks:
+      - tv_control_network
+
 networks:
   tv_control_network:
     name: tv_control_network
