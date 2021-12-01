@@ -18,7 +18,7 @@ services:
 
   tv_control_app:
     build:
-      context: ./app/php-fpm
+      context: ./backend/php-fpm
     image: tv_control_app:latest
     container_name: tv_control_app
     restart: unless-stopped
@@ -27,6 +27,40 @@ services:
       - ./backend:/var/www:rw
     depends_on:
       - tv_control_database
+    networks:
+      - tv_control_network
+  
+  tv_control_client:
+    build:
+      context: ./frontend
+    image: tv_control_client:latest
+    container_name: tv_control_client
+    restart: unless-stopped
+    working_dir: /app
+    volumes:
+      - ./frontend:/app:rw
+    ports:
+      - "83:83"
+    depends_on:
+      - tv_control_database
+      - tv_control_app
+    networks:
+      - tv_control_network
+  
+  tv_control_nginx:
+    image: nginx:latest
+    container_name: tv_control_nginx
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ./backend:/var/www:ro
+      - ./backend/nginx:/etc/nginx/conf.d
+    ports:
+      - "8989:8989"
+    depends_on:
+      - tv_control_database
+      - tv_control_app
+      - tv_control_client
     networks:
       - tv_control_network
 
